@@ -2,10 +2,7 @@
 var Character = (function () {
     function Character() {
         var _this = this;
-        this.leftSpeed = 0;
-        this.rightSpeed = 0;
-        this.downSpeed = 0;
-        this.upSpeed = 0;
+        this.speed = 0;
         this.htmlElement = document.createElement("div");
         document.body.appendChild(this.htmlElement).className = "character";
         this.posx = window.innerWidth / 2 - 125;
@@ -15,30 +12,25 @@ var Character = (function () {
         window.addEventListener("keyup", function (e) { return _this.onKeyUp(e); });
     }
     Character.prototype.update = function () {
-        if (this.leftSpeed) {
-            this.htmlElement.style.transform = "translate(" + (this.posx -= this.leftSpeed) + "px, " + this.posy + "px)";
-        }
-        if (this.rightSpeed) {
-            this.htmlElement.style.transform = "translate(" + (this.posx += this.rightSpeed) + "px, " + this.posy + "px)";
-        }
+        this.htmlElement.style.transform = "translate(" + (this.posx += this.speed) + "px, " + this.posy + "px)";
     };
     Character.prototype.onKeyDown = function (event) {
         switch (event.keyCode) {
             case 65:
-                this.leftSpeed = 5;
+                this.speed = -5;
                 break;
             case 68:
-                this.rightSpeed = 5;
+                this.speed = 5;
                 break;
         }
     };
     Character.prototype.onKeyUp = function (event) {
         switch (event.keyCode) {
             case 65:
-                this.leftSpeed = 0;
+                this.speed = 0;
                 break;
             case 68:
-                this.rightSpeed = 0;
+                this.speed = 0;
                 break;
         }
     };
@@ -49,6 +41,7 @@ var Game = (function () {
         console.log("New Game");
         this.c = new Character();
         this.gameLoop();
+        Start.getInstance().show();
     }
     Game.getInstance = function () {
         if (!Game.instance) {
@@ -64,4 +57,31 @@ var Game = (function () {
     return Game;
 }());
 window.addEventListener("load", function () { Game.getInstance(); });
+var Start = (function () {
+    function Start() {
+    }
+    Start.getInstance = function () {
+        if (!this.instance) {
+            this.instance = new Start();
+        }
+        return this.instance;
+    };
+    Start.prototype.show = function () {
+        var _this = this;
+        this.start = document.createElement('div');
+        this.start.classList.add('start');
+        this.button = document.createElement('button');
+        this.button.classList.add('button');
+        this.button.innerText = "Start";
+        this.start.appendChild(this.button);
+        this.button.addEventListener("click", function () {
+            _this.hide();
+        }, false);
+        document.body.appendChild(this.start);
+    };
+    Start.prototype.hide = function () {
+        document.body.removeChild(this.start);
+    };
+    return Start;
+}());
 //# sourceMappingURL=main.js.map

@@ -6,6 +6,7 @@ class Game {
         console.log("New Game")
         this.c = new Character();
         this.gameLoop()
+        Start.getInstance().show()
     }
 
     public static getInstance() {
