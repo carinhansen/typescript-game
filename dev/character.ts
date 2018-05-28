@@ -2,10 +2,7 @@ class Character {
     public htmlElement : HTMLElement
     private posx:number
     private posy:number
-    leftSpeed : number = 0
-    rightSpeed : number = 0
-    downSpeed : number = 0
-    upSpeed : number = 0
+    private speed:number = 0
 
     constructor(){
         this.htmlElement = document.createElement("div")
@@ -22,23 +19,18 @@ class Character {
     }
 
     public update(){
-        
-        if (this.leftSpeed) {
-            this.htmlElement.style.transform = `translate(${this.posx -= this.leftSpeed}px, ${this.posy}px)`
-        }
-        if (this.rightSpeed) {
-            this.htmlElement.style.transform = `translate(${this.posx += this.rightSpeed}px, ${this.posy}px)`
-        }
+
+        this.htmlElement.style.transform = `translate(${this.posx += this.speed}px, ${this.posy}px)`
         
     }
 
     onKeyDown(event:KeyboardEvent):void {
         switch(event.keyCode){
         case 65:
-            this.leftSpeed = 5
+            this.speed = -5
             break
         case 68:
-            this.rightSpeed = 5
+            this.speed = 5
             break
         }
     }
@@ -46,10 +38,10 @@ class Character {
     onKeyUp(event:KeyboardEvent):void {
         switch(event.keyCode){
         case 65:
-            this.leftSpeed = 0
+            this.speed = 0
             break
         case 68:
-            this.rightSpeed = 0
+            this.speed = 0
             break
         }
     }
