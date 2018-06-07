@@ -1,7 +1,7 @@
 body, html {
     margin:0; padding:0;
     width:100%; height:100%;
-    background-image: url("../images/environment.jpg");
+    background-image: url("../images/environment-1.png");
 }
 
 * {
@@ -12,11 +12,13 @@ body, html {
     position: absolute;
     z-index: 1;
     background-image: url("../images/character-1.png");
-    width: 250px;
+    width: 105px;
     height: 200px;
     background-size: cover;
     -webkit-animation: bounce 2s infinite;
     animation: bounce 2s infinite;
+    border: 2px solid red;
+    background-position: center;
 }
 
 .start {
@@ -25,5 +27,16 @@ body, html {
     width: 100%;
     height: 100%;
     background-color: green;
+}
+
+food {
+    width:150px; height:115px;;
+    background-image: url(../images/brain.png);
+    background-size:contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    position: absolute;
+    border: 2px solid red;
 }
 
