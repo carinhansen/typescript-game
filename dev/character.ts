@@ -2,7 +2,9 @@ class Character {
     public _htmlElement : HTMLElement
     public posx:number
     public posy:number
-    private speed:number = 0
+    public speed:number = 0
+    total:number = 0
+    brain:Brain
  
 
     constructor(){
@@ -22,15 +24,19 @@ class Character {
     public update(){
         this.htmlElement.style.transform = `translate(${this.posx += this.speed}px, ${this.posy}px)`
 
-        for(let i = 0; i < Game.getInstance().food.length; i++){
+        for(let i = 0; i < Game.getInstance().brain.length; i++){
             
             if(
-                this.htmlElement.getBoundingClientRect().left < Game.getInstance().food[i].element.getBoundingClientRect().right &&
-                this.htmlElement.getBoundingClientRect().right > Game.getInstance().food[i].element.getBoundingClientRect().left &&
-                this.htmlElement.getBoundingClientRect().bottom > Game.getInstance().food[i].element.getBoundingClientRect().top &&
-                this.htmlElement.getBoundingClientRect().top < Game.getInstance().food[i].element.getBoundingClientRect().bottom
+                this.htmlElement.getBoundingClientRect().left < Game.getInstance().brain[i].element.getBoundingClientRect().right &&
+                this.htmlElement.getBoundingClientRect().right > Game.getInstance().brain[i].element.getBoundingClientRect().left &&
+                this.htmlElement.getBoundingClientRect().bottom > Game.getInstance().brain[i].element.getBoundingClientRect().top &&
+                this.htmlElement.getBoundingClientRect().top < Game.getInstance().brain[i].element.getBoundingClientRect().bottom
             ){
-                console.log("collision");
+                console.log("collision" + this.total);
+                // Game.getInstance().brain.splice(i, 1);
+                // this.brain.remove();
+
+                this.total++;
             }
         }
         
@@ -46,7 +52,7 @@ class Character {
             this.speed = -5
             break
         case 68:
-            this.speed = 5
+            this.speed = +5
             break
         }
     }

@@ -1,7 +1,8 @@
 body, html {
     margin:0; padding:0;
     width:100%; height:100%;
-    background-image: url("../images/environment-1.png");
+    background-image: url("../images/bg.png");
+    background-size:cover;
 }
 
 * {
@@ -12,8 +13,8 @@ body, html {
     position: absolute;
     z-index: 1;
     background-image: url("../images/character-1.png");
-    width: 105px;
-    height: 200px;
+    width: 130px;
+    height: 180px;
     background-size: cover;
     -webkit-animation: bounce 2s infinite;
     animation: bounce 2s infinite;
@@ -31,7 +32,29 @@ body, html {
 
 food {
     width:150px; height:115px;;
+    background-image: url(../images/bomb.png);
+    background-size:contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    position: absolute;
+    border: 2px solid red;
+}
+
+brain {
+    width:150px; height:100px;;
     background-image: url(../images/brain.png);
+    background-size:contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    position: absolute;
+    border: 2px solid red;
+}
+
+cherry {
+    width:150px; height:115px;;
+    background-image: url(../images/plant_cherry_bomb.png);
     background-size:contain;
     background-position: center;
     background-repeat: no-repeat;

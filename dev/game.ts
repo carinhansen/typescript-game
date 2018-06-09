@@ -1,7 +1,9 @@
 class Game {
     private static instance: Game;
     private c: Character;
-    public food:Food[];
+    public b:Brain;
+    public brain:Brain[];
+    public cherry:Cherry[];
 
     private constructor() {
 
@@ -10,7 +12,9 @@ class Game {
     public initialize(){
         console.log("New Game")
         this.c = new Character();
-        this.food = [new Food(), new Food(), new Food(), new Food()]
+        // this.child = new Child();
+        this.brain = [new Brain(), new Brain(), new Brain(), new Brain()]
+        this.cherry = [new Cherry(), new Cherry()]
         this.gameLoop()
         Start.getInstance().show()
     }
@@ -24,9 +28,14 @@ class Game {
 
     gameLoop() {
         this.c.update();
+        
 
-        for(let f of this.food){
-            f.update()
+        for(let b of this.brain){
+            b.update()
+            b.missed();
+        }
+        for(let c of this.cherry){
+            c.update()
         }
         requestAnimationFrame(() => this.gameLoop())
     }
