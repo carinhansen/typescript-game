@@ -5,6 +5,9 @@ class Character {
     public speed:number = 0
     total:number = 0
     brain:Brain
+    behaviour:Movement
+    speedRight:number = 5
+    speedLeft:number = -5
  
 
     constructor(){
@@ -18,11 +21,13 @@ class Character {
 
         window.addEventListener("keydown", (e:KeyboardEvent) => this.onKeyDown(e))
         window.addEventListener("keyup", (e:KeyboardEvent) => this.onKeyUp(e))
+        this.behaviour = new Walking(this)
         
     }
 
     public update(){
         this.htmlElement.style.transform = `translate(${this.posx += this.speed}px, ${this.posy}px)`
+        this.behaviour.update()
 
         for(let i = 0; i < Game.getInstance().brain.length; i++){
             
@@ -49,10 +54,10 @@ class Character {
     onKeyDown(event:KeyboardEvent):void {
         switch(event.keyCode){
         case 65:
-            this.speed = -5
+            this.speed = this.speedLeft
             break
         case 68:
-            this.speed = +5
+            this.speed = this.speedRight
             break
         }
     }

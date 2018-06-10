@@ -62,6 +62,8 @@ var Character = (function () {
         var _this = this;
         this.speed = 0;
         this.total = 0;
+        this.speedRight = 5;
+        this.speedLeft = -5;
         this._htmlElement = document.createElement("div");
         document.body.appendChild(this.htmlElement).className = "character";
         this.posx = window.innerWidth / 2 - 125;
@@ -69,9 +71,11 @@ var Character = (function () {
         this.htmlElement.style.transform = "translate(" + this.posx + "px, " + this.posy + "px)";
         window.addEventListener("keydown", function (e) { return _this.onKeyDown(e); });
         window.addEventListener("keyup", function (e) { return _this.onKeyUp(e); });
+        this.behaviour = new Walking(this);
     }
     Character.prototype.update = function () {
         this.htmlElement.style.transform = "translate(" + (this.posx += this.speed) + "px, " + this.posy + "px)";
+        this.behaviour.update();
         for (var i = 0; i < Game.getInstance().brain.length; i++) {
             if (this.htmlElement.getBoundingClientRect().left < Game.getInstance().brain[i].element.getBoundingClientRect().right &&
                 this.htmlElement.getBoundingClientRect().right > Game.getInstance().brain[i].element.getBoundingClientRect().left &&
@@ -92,10 +96,10 @@ var Character = (function () {
     Character.prototype.onKeyDown = function (event) {
         switch (event.keyCode) {
             case 65:
-                this.speed = -5;
+                this.speed = this.speedLeft;
                 break;
             case 68:
-                this.speed = +5;
+                this.speed = this.speedRight;
                 break;
         }
     };
@@ -167,7 +171,11 @@ var Running = (function () {
         this.character = character;
     }
     Running.prototype.update = function () {
-        this.character.speed = 20;
+        this.character.speedRight = 20;
+        this.character.speedLeft = -20;
+        if (this.character.posx >= window.innerWidth / 2) {
+            this.character.behaviour = new Walking(this.character);
+        }
     };
     return Running;
 }());
@@ -203,7 +211,13 @@ var Walking = (function () {
         this.character = character;
     }
     Walking.prototype.update = function () {
-        this.character.speed = 10;
+        console.log("walking");
+        this.character.speedRight = 5;
+        this.character.speedLeft = -5;
+        if (this.character.posx <= window.innerWidth / 2) {
+            console.log("Maak floating");
+            this.character.behaviour = new Running(this.character);
+        }
     };
     return Walking;
 }());

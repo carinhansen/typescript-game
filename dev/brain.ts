@@ -21,11 +21,7 @@ class Brain extends Food {
         }
     }
 
-
     // remove(){
     //    remove dom element when collision
     // }
-
-
-
 }
