@@ -1,9 +1,7 @@
 class Start {
 
     private static instance: Start
-
     private start:HTMLElement
-
     private button:HTMLElement
 
     private constructor() {}
@@ -11,6 +9,7 @@ class Start {
     public static getInstance() {
         if (!this.instance) {
             this.instance = new Start()
+            
         }
         return this.instance
     }
@@ -29,11 +28,17 @@ class Start {
         }, false);
 
         document.body.appendChild(this.start);
+    }
 
-        
+    playAudio(){
+        let audio = new Audio();
+        audio.src = "audio/soundtrack.mp3";
+        audio.load();
+        audio.play();
     }
 
     public hide() {
         document.body.removeChild(this.start);
+        this.playAudio();
     }
 }

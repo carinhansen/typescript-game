@@ -10,10 +10,6 @@ class Brain extends Food {
 
     }
 
-    public test():void{
-        console.log("override");
-    }
-
     // end game when out of screen
     missed(){
         if(this.posy > 200){
@@ -21,7 +17,9 @@ class Brain extends Food {
         }
     }
 
-    // remove(){
-    //    remove dom element when collision
-    // }
+    action(){
+        console.log("brain shit")
+    }
+
+
 }

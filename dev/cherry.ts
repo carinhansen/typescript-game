@@ -10,12 +10,8 @@ class Cherry extends Food {
 
     }
 
-    public test():void{
-        console.log("override cherry");
+    action(){
+        console.log("cherry shit")
     }
-
-    // get element():HTMLElement {
-    //     return this._element;
-    // }
 
 }

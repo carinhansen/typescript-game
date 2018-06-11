@@ -2,19 +2,17 @@ class Game {
     private static instance: Game;
     private c: Character;
     public b:Brain;
-    public brain:Brain[];
-    public cherry:Cherry[];
+    public food:Food[] = [];
+    public p:Powerup;
 
-    private constructor() {
 
-    }
+    private constructor() {}
 
     public initialize(){
-        console.log("New Game")
+        this.food = [new Brain(), new Brain(), new Cherry(), new Cherry(), new Cherry(), new Cherry()]
+        this.p = new Powerup();
         this.c = new Character();
-        // this.child = new Child();
-        this.brain = [new Brain(), new Brain(), new Brain(), new Brain()]
-        this.cherry = [new Cherry(), new Cherry()]
+
         this.gameLoop()
         Start.getInstance().show()
     }
@@ -26,16 +24,17 @@ class Game {
         return Game.instance;
     }
 
+
+
     gameLoop() {
         this.c.update();
-        
-
-        for(let b of this.brain){
-            b.update()
-            b.missed();
+  
+        for(let f of this.food){
+            f.update()
         }
-        for(let c of this.cherry){
-            c.update()
+
+        if(this.food.length <= 4 ){
+            this.food.push(new Brain(), new Cherry())
         }
         requestAnimationFrame(() => this.gameLoop())
     }

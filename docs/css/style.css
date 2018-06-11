@@ -9,18 +9,31 @@ body, html {
     box-sizing: border-box;
 }
 
+
 .character {
     position: absolute;
     z-index: 1;
-    background-image: url("../images/character-1.png");
+    background-image: url("../images/zombie.png");
     width: 130px;
     height: 180px;
     background-size: cover;
     -webkit-animation: bounce 2s infinite;
     animation: bounce 2s infinite;
-    border: 2px solid red;
     background-position: center;
+
 }
+
+.characterLeft {
+    background-image: url("../images/zombie.png")!important;
+
+}
+
+.characterRight {
+    background-image: url("../images/zombie-right.png")!important;
+
+}
+
+
 
 .start {
     position: absolute;
@@ -38,7 +51,7 @@ food {
     background-repeat: no-repeat;
     cursor: pointer;
     position: absolute;
-    border: 2px solid red;
+
 }
 
 brain {
@@ -49,7 +62,7 @@ brain {
     background-repeat: no-repeat;
     cursor: pointer;
     position: absolute;
-    border: 2px solid red;
+
 }
 
 cherry {
@@ -60,6 +73,17 @@ cherry {
     background-repeat: no-repeat;
     cursor: pointer;
     position: absolute;
-    border: 2px solid red;
+
+}
+
+powerup {
+    width:150px; height:150px;;
+    background-image: url(../images/powerup.png);
+    background-size:contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    position: absolute;
+
 }
 

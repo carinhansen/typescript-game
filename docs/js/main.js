@@ -11,11 +11,10 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var Food = (function () {
     function Food() {
-        this.posy = 0;
+        this.posy = -200;
         this.posx = Math.random() * window.innerWidth;
         this.speed = Math.random() * 10;
         this.game = Game.getInstance();
-        this.test();
     }
     Food.prototype.update = function () {
         if (this.posy >= window.innerHeight) {
@@ -33,8 +32,11 @@ var Food = (function () {
         enumerable: true,
         configurable: true
     });
-    Food.prototype.test = function () {
-        console.log("food test");
+    Food.prototype.remove = function () {
+        this._element.remove();
+    };
+    Food.prototype.action = function () {
+        console.log("Food action");
     };
     return Food;
 }());
@@ -47,13 +49,13 @@ var Brain = (function (_super) {
         foreground.appendChild(_this._element);
         return _this;
     }
-    Brain.prototype.test = function () {
-        console.log("override");
-    };
     Brain.prototype.missed = function () {
         if (this.posy > 200) {
             console.log("out of screen");
         }
+    };
+    Brain.prototype.action = function () {
+        console.log("brain shit");
     };
     return Brain;
 }(Food));
@@ -66,8 +68,9 @@ var Character = (function () {
         this.speedLeft = -5;
         this._htmlElement = document.createElement("div");
         document.body.appendChild(this.htmlElement).className = "character";
+        this.food = Game.getInstance().food;
         this.posx = window.innerWidth / 2 - 125;
-        this.posy = window.innerHeight - 250;
+        this.posy = window.innerHeight - 200;
         this.htmlElement.style.transform = "translate(" + this.posx + "px, " + this.posy + "px)";
         window.addEventListener("keydown", function (e) { return _this.onKeyDown(e); });
         window.addEventListener("keyup", function (e) { return _this.onKeyUp(e); });
@@ -76,14 +79,22 @@ var Character = (function () {
     Character.prototype.update = function () {
         this.htmlElement.style.transform = "translate(" + (this.posx += this.speed) + "px, " + this.posy + "px)";
         this.behaviour.update();
-        for (var i = 0; i < Game.getInstance().brain.length; i++) {
-            if (this.htmlElement.getBoundingClientRect().left < Game.getInstance().brain[i].element.getBoundingClientRect().right &&
-                this.htmlElement.getBoundingClientRect().right > Game.getInstance().brain[i].element.getBoundingClientRect().left &&
-                this.htmlElement.getBoundingClientRect().bottom > Game.getInstance().brain[i].element.getBoundingClientRect().top &&
-                this.htmlElement.getBoundingClientRect().top < Game.getInstance().brain[i].element.getBoundingClientRect().bottom) {
-                console.log("collision" + this.total);
+        for (var i = 0; i < this.food.length; i++) {
+            if (this.htmlElement.getBoundingClientRect().left < this.food[i].element.getBoundingClientRect().right &&
+                this.htmlElement.getBoundingClientRect().right > this.food[i].element.getBoundingClientRect().left &&
+                this.htmlElement.getBoundingClientRect().bottom > this.food[i].element.getBoundingClientRect().top &&
+                this.htmlElement.getBoundingClientRect().top < this.food[i].element.getBoundingClientRect().bottom) {
+                this.food[i].action();
+                this.food[i].remove();
+                Game.getInstance().food.splice(i, 1);
                 this.total++;
             }
+        }
+        if (this.htmlElement.getBoundingClientRect().left < Game.getInstance().p.element.getBoundingClientRect().right &&
+            this.htmlElement.getBoundingClientRect().right > Game.getInstance().p.element.getBoundingClientRect().left &&
+            this.htmlElement.getBoundingClientRect().bottom > Game.getInstance().p.element.getBoundingClientRect().top &&
+            this.htmlElement.getBoundingClientRect().top < Game.getInstance().p.element.getBoundingClientRect().bottom) {
+            console.log("collision with powerup");
         }
     };
     Object.defineProperty(Character.prototype, "htmlElement", {
@@ -97,9 +108,13 @@ var Character = (function () {
         switch (event.keyCode) {
             case 65:
                 this.speed = this.speedLeft;
+                this._htmlElement.classList.add("characterLeft");
+                this._htmlElement.classList.remove("characterRight");
                 break;
             case 68:
                 this.speed = this.speedRight;
+                this._htmlElement.classList.add("characterRight");
+                this._htmlElement.classList.remove("characterLeft");
                 break;
         }
     };
@@ -124,19 +139,19 @@ var Cherry = (function (_super) {
         foreground.appendChild(_this._element);
         return _this;
     }
-    Cherry.prototype.test = function () {
-        console.log("override cherry");
+    Cherry.prototype.action = function () {
+        console.log("cherry shit");
     };
     return Cherry;
 }(Food));
 var Game = (function () {
     function Game() {
+        this.food = [];
     }
     Game.prototype.initialize = function () {
-        console.log("New Game");
+        this.food = [new Brain(), new Brain(), new Cherry(), new Cherry(), new Cherry(), new Cherry()];
+        this.p = new Powerup();
         this.c = new Character();
-        this.brain = [new Brain(), new Brain(), new Brain(), new Brain()];
-        this.cherry = [new Cherry(), new Cherry()];
         this.gameLoop();
         Start.getInstance().show();
     };
@@ -149,14 +164,12 @@ var Game = (function () {
     Game.prototype.gameLoop = function () {
         var _this = this;
         this.c.update();
-        for (var _i = 0, _a = this.brain; _i < _a.length; _i++) {
-            var b = _a[_i];
-            b.update();
-            b.missed();
+        for (var _i = 0, _a = this.food; _i < _a.length; _i++) {
+            var f = _a[_i];
+            f.update();
         }
-        for (var _b = 0, _c = this.cherry; _b < _c.length; _b++) {
-            var c = _c[_b];
-            c.update();
+        if (this.food.length <= 4) {
+            this.food.push(new Brain(), new Cherry());
         }
         requestAnimationFrame(function () { return _this.gameLoop(); });
     };
@@ -166,6 +179,27 @@ window.addEventListener("load", function () {
     var g = Game.getInstance();
     g.initialize();
 });
+var Powerup = (function () {
+    function Powerup() {
+        this._element = document.createElement("powerup");
+        var foreground = document.getElementsByTagName("foreground")[0];
+        foreground.appendChild(this._element);
+        this.posx = 100;
+        this.posy = window.innerHeight - 175;
+        this._element.style.transform = "translate(" + this.posx + "px, " + this.posy + "px)";
+    }
+    Powerup.prototype.action = function () {
+        console.log("powerup run");
+    };
+    Object.defineProperty(Powerup.prototype, "element", {
+        get: function () {
+            return this._element;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Powerup;
+}());
 var Running = (function () {
     function Running(character) {
         this.character = character;
@@ -201,8 +235,15 @@ var Start = (function () {
         }, false);
         document.body.appendChild(this.start);
     };
+    Start.prototype.playAudio = function () {
+        var audio = new Audio();
+        audio.src = "audio/soundtrack.mp3";
+        audio.load();
+        audio.play();
+    };
     Start.prototype.hide = function () {
         document.body.removeChild(this.start);
+        this.playAudio();
     };
     return Start;
 }());
