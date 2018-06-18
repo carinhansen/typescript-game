@@ -1,6 +1,7 @@
 ///<reference path='food.ts' />
 
 class Brain extends Food {
+    
     constructor(){
         super();
 

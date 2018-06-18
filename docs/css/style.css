@@ -20,7 +20,8 @@ body, html {
     -webkit-animation: bounce 2s infinite;
     animation: bounce 2s infinite;
     background-position: center;
-
+    animation-name: bounce;
+    top: -40px;
 }
 
 .characterLeft {
@@ -33,7 +34,17 @@ body, html {
 
 }
 
-
+ @keyframes bounce {
+	0% {
+    top: -40px;
+  }
+	50% {
+    top: -20px;
+  }
+	100% {
+    top: -40px;
+  }
+}
 
 .start {
     position: absolute;
@@ -77,13 +88,17 @@ cherry {
 }
 
 powerup {
-    width:150px; height:150px;;
+    width:150px; height:150px;
     background-image: url(../images/powerup.png);
     background-size:contain;
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
     position: absolute;
+}
+
+.powerupLoading {
+    background-image: url(../images/powerupLoading.png)!important;
 
 }
 

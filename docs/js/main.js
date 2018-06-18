@@ -63,22 +63,22 @@ var Character = (function () {
     function Character() {
         var _this = this;
         this.speed = 0;
-        this.total = 0;
         this.speedRight = 5;
         this.speedLeft = -5;
         this._htmlElement = document.createElement("div");
         document.body.appendChild(this.htmlElement).className = "character";
+        this.powerup = new Powerup(this);
         this.food = Game.getInstance().food;
         this.posx = window.innerWidth / 2 - 125;
         this.posy = window.innerHeight - 200;
         this.htmlElement.style.transform = "translate(" + this.posx + "px, " + this.posy + "px)";
+        this.noPowerup();
         window.addEventListener("keydown", function (e) { return _this.onKeyDown(e); });
         window.addEventListener("keyup", function (e) { return _this.onKeyUp(e); });
-        this.behaviour = new Walking(this);
     }
     Character.prototype.update = function () {
-        this.htmlElement.style.transform = "translate(" + (this.posx += this.speed) + "px, " + this.posy + "px)";
         this.behaviour.update();
+        this.htmlElement.style.transform = "translate(" + (this.posx += this.speed) + "px, " + this.posy + "px)";
         for (var i = 0; i < this.food.length; i++) {
             if (this.htmlElement.getBoundingClientRect().left < this.food[i].element.getBoundingClientRect().right &&
                 this.htmlElement.getBoundingClientRect().right > this.food[i].element.getBoundingClientRect().left &&
@@ -87,15 +87,17 @@ var Character = (function () {
                 this.food[i].action();
                 this.food[i].remove();
                 Game.getInstance().food.splice(i, 1);
-                this.total++;
             }
         }
-        if (this.htmlElement.getBoundingClientRect().left < Game.getInstance().p.element.getBoundingClientRect().right &&
-            this.htmlElement.getBoundingClientRect().right > Game.getInstance().p.element.getBoundingClientRect().left &&
-            this.htmlElement.getBoundingClientRect().bottom > Game.getInstance().p.element.getBoundingClientRect().top &&
-            this.htmlElement.getBoundingClientRect().top < Game.getInstance().p.element.getBoundingClientRect().bottom) {
-            console.log("collision with powerup");
+        if (this.htmlElement.getBoundingClientRect().left < this.powerup.element.getBoundingClientRect().right &&
+            this.htmlElement.getBoundingClientRect().right > this.powerup.element.getBoundingClientRect().left &&
+            this.htmlElement.getBoundingClientRect().bottom > this.powerup.element.getBoundingClientRect().top &&
+            this.htmlElement.getBoundingClientRect().top < this.powerup.element.getBoundingClientRect().bottom) {
+            this.powerup.action();
         }
+    };
+    Character.prototype.noPowerup = function () {
+        this.behaviour = new Walking(this);
     };
     Object.defineProperty(Character.prototype, "htmlElement", {
         get: function () {
@@ -150,7 +152,6 @@ var Game = (function () {
     }
     Game.prototype.initialize = function () {
         this.food = [new Brain(), new Brain(), new Cherry(), new Cherry(), new Cherry(), new Cherry()];
-        this.p = new Powerup();
         this.c = new Character();
         this.gameLoop();
         Start.getInstance().show();
@@ -180,7 +181,8 @@ window.addEventListener("load", function () {
     g.initialize();
 });
 var Powerup = (function () {
-    function Powerup() {
+    function Powerup(character) {
+        this.character = character;
         this._element = document.createElement("powerup");
         var foreground = document.getElementsByTagName("foreground")[0];
         foreground.appendChild(this._element);
@@ -189,7 +191,10 @@ var Powerup = (function () {
         this._element.style.transform = "translate(" + this.posx + "px, " + this.posy + "px)";
     }
     Powerup.prototype.action = function () {
-        console.log("powerup run");
+        var _this = this;
+        this.character.behaviour = new Running(this.character);
+        this._element.classList.add("powerupLoading");
+        setTimeout(function () { _this.character.noPowerup(); }, 10000);
     };
     Object.defineProperty(Powerup.prototype, "element", {
         get: function () {
@@ -207,9 +212,7 @@ var Running = (function () {
     Running.prototype.update = function () {
         this.character.speedRight = 20;
         this.character.speedLeft = -20;
-        if (this.character.posx >= window.innerWidth / 2) {
-            this.character.behaviour = new Walking(this.character);
-        }
+        console.log("RUN");
     };
     return Running;
 }());
@@ -255,10 +258,6 @@ var Walking = (function () {
         console.log("walking");
         this.character.speedRight = 5;
         this.character.speedLeft = -5;
-        if (this.character.posx <= window.innerWidth / 2) {
-            console.log("Maak floating");
-            this.character.behaviour = new Running(this.character);
-        }
     };
     return Walking;
 }());

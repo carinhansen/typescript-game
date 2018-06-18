@@ -1,16 +1,13 @@
 class Game {
     private static instance: Game;
-    private c: Character;
-    public b:Brain;
+    public c: Character;
     public food:Food[] = [];
-    public p:Powerup;
 
 
     private constructor() {}
 
     public initialize(){
         this.food = [new Brain(), new Brain(), new Cherry(), new Cherry(), new Cherry(), new Cherry()]
-        this.p = new Powerup();
         this.c = new Character();
 
         this.gameLoop()
@@ -28,7 +25,7 @@ class Game {
 
     gameLoop() {
         this.c.update();
-  
+
         for(let f of this.food){
             f.update()
         }
