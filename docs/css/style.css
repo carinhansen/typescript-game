@@ -52,6 +52,23 @@ body, html {
     width: 100%;
     height: 100%;
     background-color: green;
+    background-image: url("../images/start.jpg");
+    background-size:cover;
+}
+
+.start button {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-top: 30%;
+    margin-bottom: auto;
+    background-color: #f34a4a;
+    border: 5px solid #fff;
+    border-radius: 5px;
+    font-size: 24px;
+    text-transform: uppercase;
+    padding: 30px;
+    color: #fff;
 }
 
 food {
@@ -60,9 +77,7 @@ food {
     background-size:contain;
     background-position: center;
     background-repeat: no-repeat;
-    cursor: pointer;
     position: absolute;
-
 }
 
 brain {
@@ -71,9 +86,7 @@ brain {
     background-size:contain;
     background-position: center;
     background-repeat: no-repeat;
-    cursor: pointer;
     position: absolute;
-
 }
 
 cherry {
@@ -82,9 +95,7 @@ cherry {
     background-size:contain;
     background-position: center;
     background-repeat: no-repeat;
-    cursor: pointer;
     position: absolute;
-
 }
 
 powerup {
@@ -93,12 +104,21 @@ powerup {
     background-size:contain;
     background-position: center;
     background-repeat: no-repeat;
-    cursor: pointer;
     position: absolute;
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
 }
 
 .powerupLoading {
     background-image: url(../images/powerupLoading.png)!important;
-
 }
+
+score {
+    position: absolute;
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    padding:20px;
+}
+
 

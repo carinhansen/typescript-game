@@ -1,14 +1,14 @@
 class Character {
-    public _htmlElement : HTMLElement
-    public posx:number
-    public posy:number
-    public speed:number = 0
-    brain:Brain
-    behaviour:Movement
-    speedRight:number = 5
-    speedLeft:number = -5
-    public food:Food[];
-    powerup:Powerup
+    private _htmlElement : HTMLElement
+    private posx:number
+    private posy:number
+    private speed:number = 0
+    public behaviour:Movement
+    public speedRight:number = 5
+    public speedLeft:number = -5
+    private food:Food[];
+    public powerup:Powerup
+
 
     constructor(){
         this._htmlElement = document.createElement("div")
@@ -18,19 +18,16 @@ class Character {
         this.posx = window.innerWidth / 2 - 125;
         this.posy = window.innerHeight - 200;
 
-        this.htmlElement.style.transform = `translate(${this.posx}px, ${this.posy}px)`
+        this.htmlElement.style.transform = `translate(${this.posx}px, ${this.posy}px)`;
         this.noPowerup();
-
-        window.addEventListener("keydown", (e:KeyboardEvent) => this.onKeyDown(e))
-        window.addEventListener("keyup", (e:KeyboardEvent) => this.onKeyUp(e))
-        
+        window.addEventListener("keydown", (e:KeyboardEvent) => this.onKeyDown(e));
+        window.addEventListener("keyup", (e:KeyboardEvent) => this.onKeyUp(e));
     }
 
     public update(){
-        this.behaviour.update()
-        this.htmlElement.style.transform = `translate(${this.posx += this.speed}px, ${this.posy}px)`
+        this.behaviour.update();
+        this.htmlElement.style.transform = `translate(${this.posx += this.speed}px, ${this.posy}px)`;
         
-
         for(let i = 0; i < this.food.length; i++){
             if(
                 this.htmlElement.getBoundingClientRect().left < this.food[i].element.getBoundingClientRect().right &&
@@ -48,43 +45,45 @@ class Character {
             this.htmlElement.getBoundingClientRect().left < this.powerup.element.getBoundingClientRect().right &&
             this.htmlElement.getBoundingClientRect().right > this.powerup.element.getBoundingClientRect().left &&
             this.htmlElement.getBoundingClientRect().bottom > this.powerup.element.getBoundingClientRect().top &&
-            this.htmlElement.getBoundingClientRect().top < this.powerup.element.getBoundingClientRect().bottom
+            this.htmlElement.getBoundingClientRect().top < this.powerup.element.getBoundingClientRect().bottom &&
+            this.powerup.now
         ){
             this.powerup.action();
+            Game.getInstance().powerup = true;
         }
     }
 
-    noPowerup(){
-        this.behaviour = new Walking(this) 
+    public noPowerup(){
+        this.behaviour = new Walking(this);
     }
 
     get htmlElement():HTMLElement {
         return this._htmlElement;
     }
 
-    onKeyDown(event:KeyboardEvent):void {
+    private onKeyDown(event:KeyboardEvent):void {
         switch(event.keyCode){
         case 65:
-            this.speed = this.speedLeft
-            this._htmlElement.classList.add("characterLeft")
-            this._htmlElement.classList.remove("characterRight")
-            break
+            this.speed = this.speedLeft;
+            this._htmlElement.classList.add("characterLeft");
+            this._htmlElement.classList.remove("characterRight");
+            break;
         case 68:
-            this.speed = this.speedRight
-            this._htmlElement.classList.add("characterRight")
-            this._htmlElement.classList.remove("characterLeft")
-            break
+            this.speed = this.speedRight;
+            this._htmlElement.classList.add("characterRight");
+            this._htmlElement.classList.remove("characterLeft");
+            break;
         }
     }
     
-    onKeyUp(event:KeyboardEvent):void {
+    private onKeyUp(event:KeyboardEvent):void {
         switch(event.keyCode){
         case 65:
-            this.speed = 0
-            break
+            this.speed = 0;
+            break;
         case 68:
-            this.speed = 0
-            break
+            this.speed = 0;
+            break;
         }
     }
 }

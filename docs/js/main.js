@@ -13,12 +13,14 @@ var Food = (function () {
     function Food() {
         this.posy = -200;
         this.posx = Math.random() * window.innerWidth;
-        this.speed = Math.random() * 10;
+        this.speed = Math.random() * 10 + 1;
         this.game = Game.getInstance();
     }
     Food.prototype.update = function () {
         if (this.posy >= window.innerHeight) {
-            this.posy = -100;
+            this.remove();
+            var index = this.game.food.indexOf(this);
+            this.game.food.splice(index, 1);
         }
         else {
             this.posy += this.speed;
@@ -35,9 +37,7 @@ var Food = (function () {
     Food.prototype.remove = function () {
         this._element.remove();
     };
-    Food.prototype.action = function () {
-        console.log("Food action");
-    };
+    Food.prototype.action = function () { };
     return Food;
 }());
 var Brain = (function (_super) {
@@ -49,11 +49,6 @@ var Brain = (function (_super) {
         foreground.appendChild(_this._element);
         return _this;
     }
-    Brain.prototype.missed = function () {
-        if (this.posy > 200) {
-            console.log("out of screen");
-        }
-    };
     Brain.prototype.action = function () {
         console.log("brain shit");
     };
@@ -92,8 +87,10 @@ var Character = (function () {
         if (this.htmlElement.getBoundingClientRect().left < this.powerup.element.getBoundingClientRect().right &&
             this.htmlElement.getBoundingClientRect().right > this.powerup.element.getBoundingClientRect().left &&
             this.htmlElement.getBoundingClientRect().bottom > this.powerup.element.getBoundingClientRect().top &&
-            this.htmlElement.getBoundingClientRect().top < this.powerup.element.getBoundingClientRect().bottom) {
+            this.htmlElement.getBoundingClientRect().top < this.powerup.element.getBoundingClientRect().bottom &&
+            this.powerup.now) {
             this.powerup.action();
+            Game.getInstance().powerup = true;
         }
     };
     Character.prototype.noPowerup = function () {
@@ -134,25 +131,54 @@ var Character = (function () {
 }());
 var Cherry = (function (_super) {
     __extends(Cherry, _super);
-    function Cherry() {
+    function Cherry(s) {
         var _this = _super.call(this) || this;
+        _this.subject = s;
+        s.subscribe(_this);
         _this._element = document.createElement("cherry");
         var foreground = document.getElementsByTagName("foreground")[0];
         foreground.appendChild(_this._element);
         return _this;
     }
     Cherry.prototype.action = function () {
-        console.log("cherry shit");
+    };
+    Cherry.prototype.notify = function () {
+        this.element.remove();
+        this.game.food.slice(this.game.food.indexOf(this), 1);
+        this.subject.unsubscribe(this);
     };
     return Cherry;
 }(Food));
+var DeleteNotifier = (function () {
+    function DeleteNotifier() {
+        this.observers = [];
+    }
+    DeleteNotifier.prototype.subscribe = function (c) {
+        this.observers.push(c);
+    };
+    DeleteNotifier.prototype.unsubscribe = function (c) {
+        this.observers.splice(this.observers.indexOf(c), 1);
+    };
+    DeleteNotifier.prototype.update = function () {
+        if (Game.getInstance().powerup) {
+            for (var _i = 0, _a = this.observers; _i < _a.length; _i++) {
+                var c = _a[_i];
+                c.notify(true);
+            }
+            Game.getInstance().powerup = false;
+        }
+    };
+    return DeleteNotifier;
+}());
 var Game = (function () {
     function Game() {
         this.food = [];
+        this.powerup = false;
+        this.subject = new DeleteNotifier();
     }
     Game.prototype.initialize = function () {
-        this.food = [new Brain(), new Brain(), new Cherry(), new Cherry(), new Cherry(), new Cherry()];
-        this.c = new Character();
+        this.food = this.createFood(6);
+        this.character = new Character();
         this.gameLoop();
         Start.getInstance().show();
     };
@@ -164,15 +190,32 @@ var Game = (function () {
     };
     Game.prototype.gameLoop = function () {
         var _this = this;
-        this.c.update();
+        this.character.update();
+        this.subject.update();
         for (var _i = 0, _a = this.food; _i < _a.length; _i++) {
             var f = _a[_i];
             f.update();
         }
         if (this.food.length <= 4) {
-            this.food.push(new Brain(), new Cherry());
+            for (var _b = 0, _c = this.createFood(2); _b < _c.length; _b++) {
+                var food = _c[_b];
+                this.food.push(food);
+            }
         }
         requestAnimationFrame(function () { return _this.gameLoop(); });
+    };
+    Game.prototype.createFood = function (amount) {
+        var food = [];
+        var random = Math.floor(Math.random() * 100);
+        for (var i = 0; i < amount; i++) {
+            if (random > 30) {
+                food.push(new Cherry(this.subject));
+            }
+            else {
+                food.push(new Brain());
+            }
+        }
+        return food;
     };
     return Game;
 }());
@@ -182,6 +225,7 @@ window.addEventListener("load", function () {
 });
 var Powerup = (function () {
     function Powerup(character) {
+        this.now = true;
         this.character = character;
         this._element = document.createElement("powerup");
         var foreground = document.getElementsByTagName("foreground")[0];
@@ -193,8 +237,8 @@ var Powerup = (function () {
     Powerup.prototype.action = function () {
         var _this = this;
         this.character.behaviour = new Running(this.character);
-        this._element.classList.add("powerupLoading");
         setTimeout(function () { _this.character.noPowerup(); }, 10000);
+        this.changeStatusPlant();
     };
     Object.defineProperty(Powerup.prototype, "element", {
         get: function () {
@@ -203,6 +247,12 @@ var Powerup = (function () {
         enumerable: true,
         configurable: true
     });
+    Powerup.prototype.changeStatusPlant = function () {
+        var _this = this;
+        this.now = false;
+        this.element.classList.add("powerupLoading");
+        setTimeout(function () { _this.element.classList.remove("powerupLoading"); _this.now = true; }, 30000);
+    };
     return Powerup;
 }());
 var Running = (function () {
@@ -212,9 +262,19 @@ var Running = (function () {
     Running.prototype.update = function () {
         this.character.speedRight = 20;
         this.character.speedLeft = -20;
-        console.log("RUN");
     };
     return Running;
+}());
+var Score = (function () {
+    function Score() {
+        this.totalScore = 5;
+        this._element = document.createElement("score");
+        var foreground = document.getElementsByTagName("foreground")[0];
+        foreground.appendChild(this._element);
+    }
+    Score.prototype.update = function () {
+    };
+    return Score;
 }());
 var Start = (function () {
     function Start() {
@@ -255,7 +315,6 @@ var Walking = (function () {
         this.character = character;
     }
     Walking.prototype.update = function () {
-        console.log("walking");
         this.character.speedRight = 5;
         this.character.speedLeft = -5;
     };

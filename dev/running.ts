@@ -5,13 +5,8 @@ class Running implements Movement {
        this.character = character
     }
 
-    update(){
+    public update(){
         this.character.speedRight = 20
         this.character.speedLeft = -20
-
-        console.log("RUN")
-        
-
     }
-
 }

@@ -7,15 +7,17 @@ class Food {
     protected game:Game
         
     constructor() {
-        this.posx = Math.random() * window.innerWidth
-        this.speed = Math.random() * 10
+        this.posx = Math.random() * window.innerWidth;
+        this.speed = Math.random() * 10 + 1;
 
-        this.game = Game.getInstance()
+        this.game = Game.getInstance();
     }
 
     public update():void {
         if(this.posy >= window.innerHeight){
-            this.posy = -100;
+            this.remove();
+            const index = this.game.food.indexOf(this);
+            this.game.food.splice(index, 1);
         } else {
             this.posy += this.speed;
             this._element.style.transform = `translate(${this.posx}px, ${this.posy}px)`
@@ -26,11 +28,9 @@ class Food {
         return this._element;
     }
 
-    remove(){
+    public remove(){
         this._element.remove();
     }
 
-    action(){
-        console.log("Food action")
-    }
+    public action(){}
 }
