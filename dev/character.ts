@@ -35,6 +35,9 @@ class Character {
                 this.htmlElement.getBoundingClientRect().bottom > this.food[i].element.getBoundingClientRect().top &&
                 this.htmlElement.getBoundingClientRect().top < this.food[i].element.getBoundingClientRect().bottom
             ){
+                if (this instanceof Cherry) {
+                    this.subject.unsubscribe(this);
+                }
                 this.food[i].action();
                 this.food[i].remove();
                 Game.getInstance().food.splice(i, 1);

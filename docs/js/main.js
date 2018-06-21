@@ -18,6 +18,9 @@ var Food = (function () {
     }
     Food.prototype.update = function () {
         if (this.posy >= window.innerHeight) {
+            if (this instanceof Cherry) {
+                this.subject.unsubscribe(this);
+            }
             this.remove();
             var index = this.game.food.indexOf(this);
             this.game.food.splice(index, 1);
@@ -50,7 +53,7 @@ var Brain = (function (_super) {
         return _this;
     }
     Brain.prototype.action = function () {
-        console.log("brain shit");
+        this.game.addScore(1);
     };
     return Brain;
 }(Food));
@@ -79,6 +82,9 @@ var Character = (function () {
                 this.htmlElement.getBoundingClientRect().right > this.food[i].element.getBoundingClientRect().left &&
                 this.htmlElement.getBoundingClientRect().bottom > this.food[i].element.getBoundingClientRect().top &&
                 this.htmlElement.getBoundingClientRect().top < this.food[i].element.getBoundingClientRect().bottom) {
+                if (this instanceof Cherry) {
+                    this.subject.unsubscribe(this);
+                }
                 this.food[i].action();
                 this.food[i].remove();
                 Game.getInstance().food.splice(i, 1);
@@ -141,11 +147,13 @@ var Cherry = (function (_super) {
         return _this;
     }
     Cherry.prototype.action = function () {
+        alert("Dead!");
+        window.location.reload();
     };
     Cherry.prototype.notify = function () {
         this.element.remove();
-        this.game.food.slice(this.game.food.indexOf(this), 1);
         this.subject.unsubscribe(this);
+        this.game.food.slice(this.game.food.indexOf(this), 1);
     };
     return Cherry;
 }(Food));
@@ -163,7 +171,7 @@ var DeleteNotifier = (function () {
         if (Game.getInstance().powerup) {
             for (var _i = 0, _a = this.observers; _i < _a.length; _i++) {
                 var c = _a[_i];
-                c.notify(true);
+                c.notify();
             }
             Game.getInstance().powerup = false;
         }
@@ -172,15 +180,21 @@ var DeleteNotifier = (function () {
 }());
 var Game = (function () {
     function Game() {
+        this.score = 0;
         this.food = [];
         this.powerup = false;
         this.subject = new DeleteNotifier();
     }
     Game.prototype.initialize = function () {
+        this.scoreElement = document.createElement('div');
+        this.scoreElement.classList.add('score');
+        document.body.appendChild(this.scoreElement);
+        Start.getInstance().show();
+    };
+    Game.prototype.start = function () {
         this.food = this.createFood(6);
         this.character = new Character();
         this.gameLoop();
-        Start.getInstance().show();
     };
     Game.getInstance = function () {
         if (!Game.instance) {
@@ -188,10 +202,17 @@ var Game = (function () {
         }
         return Game.instance;
     };
+    Game.prototype.addScore = function (amount) {
+        this.score += amount;
+    };
+    Game.prototype.showScore = function () {
+        this.scoreElement.innerHTML = this.score.toString();
+    };
     Game.prototype.gameLoop = function () {
         var _this = this;
         this.character.update();
         this.subject.update();
+        this.showScore();
         for (var _i = 0, _a = this.food; _i < _a.length; _i++) {
             var f = _a[_i];
             f.update();
@@ -295,6 +316,7 @@ var Start = (function () {
         this.start.appendChild(this.button);
         this.button.addEventListener("click", function () {
             _this.hide();
+            Game.getInstance().start();
         }, false);
         document.body.appendChild(this.start);
     };

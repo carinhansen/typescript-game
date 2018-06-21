@@ -15,7 +15,7 @@ class DeleteNotifier implements Subject{
     public update():void{
         if (Game.getInstance().powerup) {
             for(let c of this.observers){
-                c.notify(true);
+                c.notify();
             }
             Game.getInstance().powerup = false;
         }

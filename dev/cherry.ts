@@ -10,20 +10,21 @@ class Cherry extends Food implements Observer {
         this.subject = s;
         s.subscribe(this);
 
-        this._element = document.createElement("cherry")
-        let foreground = document.getElementsByTagName("foreground")[0]
+        this._element = document.createElement("cherry");
+        let foreground = document.getElementsByTagName("foreground")[0];
         foreground.appendChild(this._element);
 
     }
 
     public action(){
-        // alert("Dead!");
+        alert("Dead!");
+        window.location.reload();
     }
 
     public notify(){
         this.element.remove();
-        this.game.food.slice(this.game.food.indexOf(this), 1);
         this.subject.unsubscribe(this);
+        this.game.food.slice(this.game.food.indexOf(this), 1);
     }
 
 }

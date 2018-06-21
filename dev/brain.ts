@@ -9,6 +9,6 @@ class Brain extends Food {
     }
 
     public action(){
-        console.log("brain shit")
+        this.game.addScore(1);
     }
 }

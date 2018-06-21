@@ -8,7 +8,5 @@ class Walking implements Movement {
     update(){
         this.character.speedRight = 5
         this.character.speedLeft = -5
-
     }
-
 }

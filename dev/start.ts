@@ -25,6 +25,7 @@ class Start {
 
         this.button.addEventListener("click", () => {
             this.hide()
+            Game.getInstance().start();
         }, false);
 
         document.body.appendChild(this.start);

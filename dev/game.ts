@@ -1,18 +1,25 @@
 class Game {
     private static instance: Game;
     private character: Character;
+    private score: number = 0;
+    private scoreElement: HTMLElement;
     public food:Food[] = [];
     public powerup:boolean = false;
     public subject:Subject = new DeleteNotifier();
 
-
     private constructor() {}
 
     public initialize(){
+        this.scoreElement = document.createElement('div');
+        this.scoreElement.classList.add('score');
+        document.body.appendChild(this.scoreElement);
+        Start.getInstance().show();
+    }
+
+    public start() {
         this.food = this.createFood(6);
         this.character = new Character();
         this.gameLoop();
-        Start.getInstance().show();
     }
 
     public static getInstance() {
@@ -22,9 +29,18 @@ class Game {
         return Game.instance;
     }
 
+    public addScore(amount:number) {
+        this.score += amount;
+    }
+
+    private showScore() {
+        this.scoreElement.innerHTML = this.score.toString();
+    }
+
     private gameLoop() {
         this.character.update();
         this.subject.update();
+        this.showScore();
         
         for(let f of this.food){
             f.update()

@@ -15,6 +15,9 @@ class Food {
 
     public update():void {
         if(this.posy >= window.innerHeight){
+            if (this instanceof Cherry) {
+                this.subject.unsubscribe(this);
+            }
             this.remove();
             const index = this.game.food.indexOf(this);
             this.game.food.splice(index, 1);
