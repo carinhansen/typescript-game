@@ -27,7 +27,7 @@ Voor de tweede peer review heb ik de code van Arno de Jong gereviewd
 
 ## Klassendiagram
 
-![](docs/UML-Typescript-Game.png)
+![](docs/images/uml.png)
 
 ## Singleton
 
