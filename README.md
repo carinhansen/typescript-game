@@ -1,7 +1,12 @@
 # Typescript-game
 
-Made a class for the file object in the creator class because now you can easily add stuff in the future. I think it also looks more professional now. 
-It separates logic from objects. Code is expandable.
+## De game
+
+Het is de bedoeling dat je de brains eet en de cherries ontwijkt. Je kunt een powerup links onderin pakken waardoor je sneller gaat bewegen en die ervoor zorgt dat er cherries verwijderd worden.
+
+## Speelbare link
+
+(https://carinhansen.github.io/typescript-game/)
 
 ### Peer review/ pull request
 
@@ -22,7 +27,7 @@ Voor de tweede peer review heb ik de code van Arno de Jong gereviewd
 
 ## Klassendiagram
 
-
+![](docs/UML Typescript Game.png)
 
 ## Singleton
 
